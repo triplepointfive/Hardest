@@ -11,7 +11,7 @@ import qualified Graphics.UI.SDL.TTF.Render as TTFR
 import qualified Graphics.UI.SDL.TTF.Types as TTFT
 import System.CPUTime ( getCPUTime )
 --import Control.Concurrent.Thread.Delay (delay)
-import Data.Atom.Simple ( Symbol, intern )
+-- import Data.Atom.Simple ( Symbol, intern )
 
 import Levels
 
@@ -30,7 +30,7 @@ getCPUTimeDouble = (\t -> fromInteger t * 1e-12) <$> getCPUTime
 
 type DTime = Double
 
-type Hash a = [(Symbol, a)]
+type Hash a = [(String, a)]
 
 data Screen = Screen { screenSurface :: SDL.Surface
                      , screenWidth   :: Int
@@ -74,7 +74,7 @@ checkCollision pl (ZoneForbid (u1, u2) (u3, u4)) = (v3 <= u1+1) || (v4 <= u2+1) 
 checkCollision _ (ZoneWin _ _) = True
 
 hashFind :: String -> Hash a -> a
-hashFind key hash = (snd.head) $ filter ((==intern key).fst) hash
+hashFind key hash = (snd.head) $ filter ((== key).fst) hash
 
 initialize :: IO App
 initialize = do
@@ -85,7 +85,7 @@ initialize = do
   mainFont <- TTFM.openFont "lazy.ttf" 28
   cTime    <- getCPUTimeDouble
   imags <- forM imgs (\(file, params) -> loadImage (file ++ ".png") params)
-  let hash = zipWith (\(file, _) im -> (intern file, im)) imgs imags in
+  let hash = zipWith (\(file, _) im -> (file, im)) imgs imags in
     return $ App (Screen screen width height bpp) (Player (80, 240) 0 150) (Handle False []) mainFont startLevels cTime hash
     where
       width = 640
